@@ -1,7 +1,13 @@
 package vis.ooe.fh.at.visapp;
 
 import android.content.Context;
+import android.graphics.Typeface;
+import android.support.annotation.NonNull;
+import android.view.View;
+import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
+import android.widget.ListView;
+import android.widget.TextView;
 
 import java.util.HashMap;
 import java.util.List;
