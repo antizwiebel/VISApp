@@ -6,6 +6,9 @@ import android.content.Context;
 import android.content.Intent;
 import android.location.LocationManager;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
+import android.os.Messenger;
 import android.provider.Settings;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
@@ -27,10 +30,14 @@ public class MainActivity extends AppCompatActivity {
 
     private static final int LOC_ENABLE_REQUEST = 1;
     private static final int BT_ENABLE_REQUEST = 2;
+    public static final String TAG = "MainActivity";
+    public static final String MESSENGER_KEY = "messenger";
+    public static final int MESSAGE_KEY = 27;
+    public static String DATA_KEY= "data";
     private boolean mServiceStarted=false;
 
-    public static final String TAG ="MainActivity";
-
+    private Handler mHandler;
+    private Messenger mActivityMessenger;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -60,6 +67,25 @@ public class MainActivity extends AppCompatActivity {
                 mDeviceDataTextView.setText(item + "'s data:" + Math.random()*100);
             }
         });
+
+        mHandler = new Handler() {
+            @Override
+            public void handleMessage(Message _msg) {
+                if (_msg != null) {
+                    switch (_msg.what) {
+                        case MESSAGE_KEY: {
+                            Bundle bundle = _msg.getData();
+                            String data = bundle.getString(DATA_KEY, "undefined");
+                            mDeviceDataTextView.setText(data);
+                        }
+                        break;
+                        default:
+                            Log.e(TAG, "unknown message tag...");
+                            super.handleMessage(_msg);
+                    }
+                }
+            }
+        };
 
         //TODO move to appropiate location
         checkBLEEnabled();
@@ -91,6 +117,8 @@ public class MainActivity extends AppCompatActivity {
             checkLocationEnabled();
 
             Intent i = new Intent(this, BluetoothService.class);
+            mActivityMessenger = new Messenger(mHandler);
+            i.putExtra(MESSENGER_KEY, mActivityMessenger);
             startService(i);
         } else if (id == R.id.action_stop_service && mServiceStarted) {
             mServiceStarted =false;
