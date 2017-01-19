@@ -99,12 +99,12 @@ public class BluetoothService extends Service {
         mBLE_DeviceList = new ArrayList<>();
         //Stops scanning after a pre-defined scan period.
         //TODO: hander fertigstellen
-        /*mHandler.postDelayed(new Runnable() {
+        mHandler.postDelayed(new Runnable() {
             @Override
             public void run() {
                 stopScan();
             }
-        }, 2000);*/
+        }, 2000);
 
         // ScanFilter.Builder filterFac = new ScanFilter.Builder();
         // filterFac = filterFac.setDeviceAddress("E5:::blablabla") //heart rate
@@ -119,6 +119,24 @@ public class BluetoothService extends Service {
 
         mBLEScanner.startScan(null, settings, mScanCallback);
         //TODO: Message activity to start progress indicator
+    }
+
+    public void stopScan() {
+        mBLEScanner.stopScan(mScanCallback);
+        //TODO: MESSAGE Activity to stop progress indicator
+        sendBLEDeviceList();
+    }
+
+    protected void sendBLEDeviceList(){
+        Bundle bundle = new Bundle();
+        bundle.putString(MainActivity.DEVICE_LIST_KEY,mBLE_DeviceList.toString());
+        Message message = new Message();
+        message.setData(bundle);
+        try {
+            mServiceMessenger.send(message);
+        } catch (RemoteException e) {
+            e.printStackTrace();
+        }
     }
 
     @Override

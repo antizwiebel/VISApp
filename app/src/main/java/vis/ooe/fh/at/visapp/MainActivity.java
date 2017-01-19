@@ -33,6 +33,7 @@ public class MainActivity extends AppCompatActivity {
     public static final String TAG = "MainActivity";
     public static final String MESSENGER_KEY = "messenger";
     public static final int MESSAGE_KEY = 27;
+    public static final String DEVICE_LIST_KEY="device list";
     public static String DATA_KEY= "data";
     private boolean mServiceStarted=false;
 
