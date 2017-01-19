@@ -33,6 +33,7 @@ public class MainActivity extends AppCompatActivity {
     public static final String TAG = "MainActivity";
     public static final String MESSENGER_KEY = "messenger";
     public static final int MESSAGE_KEY = 27;
+    public static final int DEVICE_MESSAGE_KEY=33;
     public static final String DEVICE_LIST_KEY="device list";
     public static String DATA_KEY= "data";
     private boolean mServiceStarted=false;
@@ -78,6 +79,17 @@ public class MainActivity extends AppCompatActivity {
                             Bundle bundle = _msg.getData();
                             String data = bundle.getString(DATA_KEY, "undefined");
                             mDeviceDataTextView.setText(data);
+                        }
+                        case DEVICE_MESSAGE_KEY: {
+                            Bundle bundle = _msg.getData();
+                            ArrayList <String> deviceList = (ArrayList<String>)bundle.get(DEVICE_LIST_KEY);
+                            if (deviceList==null) {
+                                deviceList.add("No Devices");
+                                Toast.makeText(MainActivity.this, "DeviceList Empty", Toast.LENGTH_SHORT).show();
+                            }
+                            final StableArrayAdapter adapter = new StableArrayAdapter(MainActivity.this, android.R.layout.simple_list_item_1
+                                    , deviceList);
+
                         }
                         break;
                         default:

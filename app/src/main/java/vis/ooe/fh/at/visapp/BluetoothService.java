@@ -129,8 +129,13 @@ public class BluetoothService extends Service {
 
     protected void sendBLEDeviceList(){
         Bundle bundle = new Bundle();
-        bundle.putString(MainActivity.DEVICE_LIST_KEY,mBLE_DeviceList.toString());
+        ArrayList<String>devices = new ArrayList<>();
+        for (ScanResult r: mBLE_DeviceList) {
+            devices.add(r.getDevice().getName());
+        }
+        bundle.putStringArrayList(MainActivity.DEVICE_LIST_KEY,devices);
         Message message = new Message();
+        message.what=MainActivity.DEVICE_MESSAGE_KEY;
         message.setData(bundle);
         try {
             mServiceMessenger.send(message);
