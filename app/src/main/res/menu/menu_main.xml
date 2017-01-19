@@ -1,0 +1,16 @@
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:context="vis.ooe.fh.at.visapp.MainActivity">
+    <item
+        android:id="@+id/action_start_service"
+        android:icon="@drawable/ic_refresh_black_24dp"
+        android:title="@string/start_service"
+        app:showAsAction="ifRoom" />
+    <item
+        android:id="@+id/action_stop_service"
+        android:icon="@drawable/ic_close_black_24dp"
+        android:title="@string/stop_service"
+        app:showAsAction="ifRoom" />
+
+</menu>
