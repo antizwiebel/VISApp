@@ -29,6 +29,8 @@ public class MainActivity extends AppCompatActivity {
     private static final int BT_ENABLE_REQUEST = 2;
     private boolean mServiceStarted=false;
 
+    public static final String TAG ="MainActivity";
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);

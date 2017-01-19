@@ -2,16 +2,31 @@ package vis.ooe.fh.at.visapp;
 
 import android.app.Notification;
 import android.app.Service;
+import android.bluetooth.BluetoothAdapter;
+import android.bluetooth.BluetoothManager;
+import android.bluetooth.le.BluetoothLeScanner;
+import android.bluetooth.le.ScanCallback;
+import android.bluetooth.le.ScanRecord;
+import android.bluetooth.le.ScanResult;
+import android.bluetooth.le.ScanSettings;
 import android.content.Intent;
 import android.os.IBinder;
 import android.support.annotation.Nullable;
+import android.support.annotation.StringDef;
 import android.util.Log;
+
+import java.util.ArrayList;
+import java.util.logging.Handler;
 
 /**
  * Created by Mark on 18.01.2017.
  */
 public class BluetoothService extends Service {
     private static final String BLESERVICE_TAG = "BLEService";
+
+    public BluetoothLeScanner mBLEScanner;
+    public ScanCallback mScanCallback;
+    public ArrayList<ScanResult> mBLE_DeviceList;
 
     @Nullable
     @Override
@@ -21,7 +36,57 @@ public class BluetoothService extends Service {
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
+        final BluetoothManager bluetoothManager =  (BluetoothManager) (getSystemService(BLUETOOTH_SERVICE));
+        BluetoothAdapter bluetoothAdapter = bluetoothManager.getAdapter();
+
+        mBLEScanner = bluetoothAdapter.getBluetoothLeScanner();
+        mScanCallback = new ScanCallback(){
+
+            @Override
+            public void onScanResult(int _callbackType, ScanResult _result){
+                String device = _result.getDevice().getName();
+                device = (device == null || device.length() == 0) ?
+                        "device has no name" : device;
+                Log.i(MainActivity.TAG, "BLE_Service ScannCallback::onScanResult() -->" +
+                        device);
+                for(int i = 0; i<mBLE_DeviceList.size(); i++){
+                    ScanResult entry = mBLE_DeviceList.get(i);
+                    if(entry.getDevice().getAddress().equals(_result.getDevice().getAddress()))
+                        return;
+                } //for i
+                mBLE_DeviceList.add(_result);
+            }
+        };
+        startScan();
+
+
         return Service.START_STICKY;
+    }
+
+    protected void startScan() {
+        mBLE_DeviceList = new ArrayList<>();
+        //Stops scanning after a pre-defined scan period.
+        //TODO: hander fertigstellen
+        /*mHandler.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                stopScan();
+            }
+        }, 2000);*/
+
+        // ScanFilter.Builder filterFac = new ScanFilter.Builder();
+        // filterFac = filterFac.setDeviceAddress("E5:::blablabla") //heart rate
+        // Scan Filter filter = filterFac.build();
+        //List <ScanFilter> filters = new ArrayList<ScanFilter();
+        //filters.add(filter)
+
+        ScanSettings.Builder settingsFac = new ScanSettings.Builder();
+        settingsFac = settingsFac.setCallbackType(ScanSettings.CALLBACK_TYPE_ALL_MATCHES);
+        settingsFac = settingsFac.setScanMode(ScanSettings.SCAN_MODE_BALANCED);
+        ScanSettings settings = settingsFac.build();
+
+        mBLEScanner.startScan(null, settings, mScanCallback);
+        //TODO: Message activity to start progress indicator
     }
 
     @Override
